@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
 from data_loader import RotatedImagesDataset
-from network import CNNNetwork
+from network import CaptchaNetwork1
 from train import train
 from validation import validation
 from test import test
@@ -76,7 +76,7 @@ test_dataset_loader = DataLoader(
     pin_memory=True,
 )
 
-model = CNNNetwork()
+model = CaptchaNetwork1()
 model = model.to(params["device"])
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=params["learning_rate"])

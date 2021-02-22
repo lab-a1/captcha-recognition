@@ -2,9 +2,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class CNNNetwork(nn.Module):
+class CaptchaNetwork1(nn.Module):
     def __init__(self):
-        super(CNNNetwork, self).__init__()
+        super(CaptchaNetwork1, self).__init__()
 
         self.conv1 = nn.Conv2d(
             in_channels=3,

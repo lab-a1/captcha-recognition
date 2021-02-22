@@ -1,6 +1,6 @@
 #!/bin/sh
 
-session="template"
+session="cr"
 # tmux kill-session -t $session
 session_exists=$(tmux list-sessions | grep $session)
 
