@@ -28,3 +28,7 @@ tar -xzvf dataset.tar.gz -C dataset
 cd src
 python main.py
 ```
+
+## To do
+
+- [ ] Use recurrent network instead of fully connect to recognize characters.
