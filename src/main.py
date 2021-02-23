@@ -31,8 +31,8 @@ test_dataset = CaptchasDataset("../dataset/images", test_dataset)
 params = {
     "device": "cuda",
     "learning_rate": 1e-4,
-    "batch_size": 32,
-    "epochs": 10,
+    "batch_size": 64,
+    "epochs": 16,
     "num_workers": 4,
 }
 

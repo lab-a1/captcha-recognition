@@ -10,17 +10,18 @@ class CaptchaDenseNetwork(nn.Module):
 
         self.conv1 = nn.Conv2d(
             in_channels=3,
-            out_channels=32,
+            out_channels=16,
             kernel_size=3,
         )
+        self.pool1 = nn.MaxPool2d(kernel_size=2)
         self.conv2 = nn.Conv2d(
-            in_channels=32,
-            out_channels=32,
+            in_channels=16,
+            out_channels=16,
             kernel_size=3,
         )
-        self.pool = nn.MaxPool2d(kernel_size=2)
+        self.pool2 = nn.MaxPool2d(kernel_size=2)
 
-        self.fc1 = nn.Linear(in_features=32 * 11 * 48, out_features=1024)
+        self.fc1 = nn.Linear(in_features=16 * 11 * 48, out_features=1024)
         self.fc2_0 = nn.Linear(in_features=1024, out_features=number_classes)
         self.fc2_1 = nn.Linear(in_features=1024, out_features=number_classes)
         self.fc2_2 = nn.Linear(in_features=1024, out_features=number_classes)
@@ -28,8 +29,8 @@ class CaptchaDenseNetwork(nn.Module):
         self.fc2_4 = nn.Linear(in_features=1024, out_features=number_classes)
 
     def forward(self, x):
-        out = self.pool(F.relu(self.conv1(x)))
-        out = self.pool(F.relu(self.conv2(out)))
+        out = self.pool1(F.relu(self.conv1(x)))
+        out = self.pool2(F.relu(self.conv2(out)))
         # Flatten.
         out = out.view(out.size(0), -1)
         out = F.relu(self.fc1(out))
