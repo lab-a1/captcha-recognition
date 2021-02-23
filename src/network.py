@@ -1,10 +1,12 @@
+import string
 import torch.nn as nn
 import torch.nn.functional as F
 
 
-class CaptchaNetwork1(nn.Module):
+class CaptchaDenseNetwork(nn.Module):
     def __init__(self):
-        super(CaptchaNetwork1, self).__init__()
+        super(CaptchaDenseNetwork, self).__init__()
+        number_classes = len(string.printable)
 
         self.conv1 = nn.Conv2d(
             in_channels=3,
@@ -18,8 +20,12 @@ class CaptchaNetwork1(nn.Module):
         )
         self.pool = nn.MaxPool2d(kernel_size=2)
 
-        self.fc1 = nn.Linear(in_features=32 * 14 * 14, out_features=1024)
-        self.fc2 = nn.Linear(in_features=1024, out_features=4)
+        self.fc1 = nn.Linear(in_features=32 * 11 * 48, out_features=1024)
+        self.fc2_0 = nn.Linear(in_features=1024, out_features=number_classes)
+        self.fc2_1 = nn.Linear(in_features=1024, out_features=number_classes)
+        self.fc2_2 = nn.Linear(in_features=1024, out_features=number_classes)
+        self.fc2_3 = nn.Linear(in_features=1024, out_features=number_classes)
+        self.fc2_4 = nn.Linear(in_features=1024, out_features=number_classes)
 
     def forward(self, x):
         out = self.pool(F.relu(self.conv1(x)))
@@ -27,5 +33,9 @@ class CaptchaNetwork1(nn.Module):
         # Flatten.
         out = out.view(out.size(0), -1)
         out = F.relu(self.fc1(out))
-        out = self.fc2(out)
-        return out
+        y0 = self.fc2_0(out)
+        y1 = self.fc2_1(out)
+        y2 = self.fc2_2(out)
+        y3 = self.fc2_3(out)
+        y4 = self.fc2_4(out)
+        return y0, y1, y2, y3, y4

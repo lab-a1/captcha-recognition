@@ -1,22 +1,19 @@
 import torch
+import string
 import os
 from torch.utils.data import Dataset
 import cv2
 
 
-class RotatedImagesDataset(Dataset):
-    def __init__(self, images_path, ground_truth, transform=None):
+class CaptchasDataset(Dataset):
+    def __init__(self, images_path, ground_truth):
         self.ground_truth = ground_truth
         self.images_path = images_path
-        self.transform = transform
         self.label_to_index = {
-            "upright": 0,
-            "rotated_right": 1,
-            "upside_down": 2,
-            "rotated_left": 3,
+            char: i for i, char in enumerate(string.printable)
         }
         self.index_to_label = {
-            self.label_to_index[x]: x for x in self.label_to_index
+            i: char for i, char in enumerate(string.printable)
         }
 
     def __len__(self):
@@ -33,7 +30,6 @@ class RotatedImagesDataset(Dataset):
         image = cv2.imread(image_path)
         # OpenCV reads by default as BGR.
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        if self.transform:
-            image = self.transform(image=image)["image"]
-        return image, self.label_to_index[item[1]]
+        # 200x50x3 => 3x200x50
+        image = image.transpose((2, 0, 1))
+        return image, [self.label_to_index[x] for x in item[1]]

@@ -1,14 +1,12 @@
 import os
 import torch
 import pandas as pd
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
 import torch.backends.cudnn as cudnn
 from torch.utils.data import DataLoader
 import torch.nn as nn
 import torch.optim as optim
-from data_loader import RotatedImagesDataset
-from network import CaptchaNetwork1
+from data_loader import CaptchasDataset
+from network import CaptchaDenseNetwork
 from train import train
 from validation import validation
 from test import test
@@ -26,30 +24,14 @@ train_dataset, validation_dataset, test_dataset = split_dataset(
     ground_truth, 0.1, 0.1
 )
 
-dataset_transform = A.Compose(
-    [
-        A.ShiftScaleRotate(p=0.6, shift_limit=0.1, rotate_limit=15),
-        A.RandomBrightnessContrast(p=0.7),
-        A.ToGray(p=0.3),
-        A.ToSepia(p=0.2),
-        ToTensorV2(),
-    ]
-)
-test_dataset_transform = A.Compose([ToTensorV2()])
-train_dataset = RotatedImagesDataset(
-    "../dataset/images", train_dataset, dataset_transform
-)
-validation_dataset = RotatedImagesDataset(
-    "../dataset/images", validation_dataset, dataset_transform
-)
-test_dataset = RotatedImagesDataset(
-    "../dataset/images", test_dataset, test_dataset_transform
-)
+train_dataset = CaptchasDataset("../dataset/images", train_dataset)
+validation_dataset = CaptchasDataset("../dataset/images", validation_dataset)
+test_dataset = CaptchasDataset("../dataset/images", test_dataset)
 
 params = {
     "device": "cuda",
     "learning_rate": 1e-4,
-    "batch_size": 64,
+    "batch_size": 32,
     "epochs": 10,
     "num_workers": 4,
 }
@@ -76,7 +58,7 @@ test_dataset_loader = DataLoader(
     pin_memory=True,
 )
 
-model = CaptchaNetwork1()
+model = CaptchaDenseNetwork()
 model = model.to(params["device"])
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=params["learning_rate"])
